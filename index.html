@@ -1,0 +1,161 @@
+<html>
+  <head>
+
+  	<title>OneDFT - A one-dimensional Javascript Density Functional Theory tool</title>
+
+  	<!-- Include here required libraries -->
+
+  	<script type="text/javascript" src="libs/jquery-1.11.2.min.js"></script>
+  	<script type="text/javascript" src="libs/numeric-1.2.6.min.js"></script>
+  	<script type="text/javascript" src="libs/d3.min.js"></script>
+
+  	<!-- Here are instead the other files -->
+
+  	<script type="text/javascript" src="js/constants.js"></script>
+  	<script type="text/javascript" src="js/hamiltonian.js"></script>
+  	<script type="text/javascript" src="js/lda.js"></script>
+    <script type="text/javascript" src="js/solver.js"></script>
+    <script type="text/javascript" src="js/plot.js"></script>
+    <script type="text/javascript" src="js/style.js"></script>
+    <script type="text/javascript" src="js/scrollbars.js"></script>
+
+  	<link href="stylesheet.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="main_div">
+    <svg id="wavef_svg">
+    </svg>
+	
+    <svg id="potential_svg">
+    </svg>
+
+    <div id="controls">
+      <div id="title">
+        Quantum
+
+      </div>
+      
+        <div class="dropmenu style_select">
+          <h1>
+            <img class="arrow_ico" src="img/drop_icon.png">
+            <span id="current_style">particles</span>
+            <img class="arrow_ico" src="img/drop_icon.png">
+            <div>
+              <div id="style_particles_button" class="button" onclick="style_set(0)">particles</div>
+              <div id="style_billiards_button" class="button" onclick="style_set(1)">billiards</div>
+              <!-- Removed for now
+              <div id="style_kittens_button"   class="button" onclick="style_set(2)">kittens</div>
+              -->
+            </div>
+          </h1>
+        </div>
+
+        <div class="ctrl_box">
+          Number of <span class="particles_name">particles</span> :         
+          <div class="dropmenu particle_select number_select">
+            <h1>
+              <img class="arrow_ico" src="img/drop_icon.png">
+              <span id="current_pn">1</span>
+              <div>
+                <div id="partn_1_button" class="button" onclick="solver.set_particlen(1)">1</div>
+                <div id="partn_2_button" class="button" onclick="solver.set_particlen(2)">2</div>
+                <div id="partn_3_button"   class="button" onclick="solver.set_particlen(3)">3</div>
+                <div id="partn_4_button"   class="button" onclick="solver.set_particlen(4)">4</div>
+              </div>
+            </h1>
+          </div>
+        </div>
+
+        <div class="ctrl_box">
+          Mass of <span class="particles_name">particles</span> :         
+          <div id="mass_scrollbar" class="scrollbar_css">
+            <div class="scrollhandle_css">
+            </div>
+            <div class="scrolllabel_left">
+            </div>
+            <div class="scrolllabel_right">
+            </div>
+          </div>
+        </div>
+
+        <div class="ctrl_box">
+          Vertical scale :         
+          <div id="scale_scrollbar" class="scrollbar_css">
+            <div class="scrollhandle_css">
+            </div>
+            <div class="scrolllabel_left">
+            </div>
+            <div class="scrolllabel_right">
+            </div>
+          </div>
+        </div>
+
+        <div class="button solo_button" onclick="clear_all()">
+          Clear
+        </div>
+
+        <div class="button solo_button" onclick="solver.solve()">
+          Solve
+        </div>
+
+        <div class="ctrl_box">
+          <div class="log_box">
+          </div>
+        </div>
+
+    </div>
+
+    </div>
+
+  	<script type="text/javascript">
+
+      var mass_scrollbar, scale_scrollbar;
+
+      function clear_all() {
+        $('.log_box').html('');
+        solver.init();
+        wavef_plot.init();
+        potential_plot.init();
+      }
+
+  		$('document').ready(function () { 		
+        clear_all();
+        style_set(0);
+        // Init controls
+        mass_scrollbar = new SliderControl('mass_scrollbar', 0.1, 5.0, solver.set_particlemass);
+        scale_scrollbar = new SliderControl('scale_scrollbar', 0.2, 1.0, wavef_plot.update_scale);
+
+  		});
+
+      $(window).resize(function() {
+        clear_all();
+      });
+
+      $(window).scroll(function(e) {
+        e.preventDefault();
+      });
+
+  	</script>
+
+    <!-- SVG models stored here -->
+
+    <svg id="billiard_model" class="svg_model">
+      <g>
+        <path d="m430,462.36a127.14,127.14,0,1,1,-254.29,0,127.14,127.14,0,1,1,254.29,0z" transform="matrix(0.56756755,0,0,0.56756755,-96.89189,714.94041)" fill="#FFF"/>
+        <path id="ball_colorbar" fill="#800000" d="m18.589,932.37c-9.8539,12.338-15.75,27.979-15.75,44.997s5.8961,32.659,15.75,44.997h112.82c9.8539-12.338,15.75-27.979,15.75-44.997s-5.8961-32.659-15.75-44.997h-112.82z"/>
+        <path d="m437.14,540.58a56.071,56.071,0,1,1,-112.14,0,56.071,56.071,0,1,1,112.14,0z" transform="matrix(0.56756755,0,0,0.56756755,-141.28379,670.54852)" fill="#FFF"/>
+        <path stroke-linejoin="miter" d="m430,462.36a127.14,127.14,0,1,1,-254.29,0,127.14,127.14,0,1,1,254.29,0z" transform="matrix(0.56756755,0,0,0.56756755,-96.89189,714.94041)" stroke-dashoffset="0" stroke="#000" stroke-linecap="butt" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="10" fill="none"/>
+        <text style="letter-spacing:0px;text-anchor:middle;word-spacing:0px;text-align:center;" font-weight="bold" xml:space="preserve" font-size="39.7297287px" font-style="normal" font-stretch="normal" font-variant="normal" y="983.59973" x="75.0242" line-height="100%" fill="#000000"><tspan x="75.0242" y="983.59973"><tspan id="ball_numtext" y="988.59973" x="75.0242" line-height="100%">7</tspan></tspan></text>
+      </g>
+  </svg>
+
+
+
+
+  </body>
+
+</html>
+
